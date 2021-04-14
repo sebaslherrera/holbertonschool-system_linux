@@ -1,6 +1,6 @@
 #include "ls.h"
 
-int main(int argc, char **argv);
+void ls_simple(struct dirent *read, dlistint_t **head_files);
 void ls_long_listing_format(struct dirent *read, char *input_path);
 
 /**
@@ -12,6 +12,8 @@ int main(int argc, char **argv)
 	DIR *dir;
 	struct dirent *read; /* Struct used by readdir */
 	char *input_path = NULL;
+	dlistint_t *head_files = NULL;
+	/* int flags = 0; */
 
 	printf("argc: %d\n", argc);
 
@@ -25,17 +27,16 @@ int main(int argc, char **argv)
 	dir = opendir(input_path);
 	if (dir == NULL)
 	{
-		printf("%s: cannot access %s: No such file or directory\n",
-			   argv[0], argv[1]);
+		fprintf(stderr, "%s: cannot access %s: No such file or directory\n",
+				argv[0], argv[1]);
 		return (-1);
 	}
 
 	while ((read = readdir(dir)) != NULL)
 	{
-		if (argc < 2)
+		if (argc == 2)
 		{
-			printf("Pase por aqui\n");
-			printf("%s\n", read->d_name);
+			ls_simple(read, &head_files);
 		}
 		else
 		{
@@ -44,9 +45,17 @@ int main(int argc, char **argv)
 		}
 	}
 
+	print_simple(head_files);
+	free_list(&head_files);
+
 	closedir(dir);
 
 	return (0);
+}
+
+void ls_simple(struct dirent *read, dlistint_t **head_files)
+{
+	add_dnode(head_files, read->d_name);
 }
 
 void ls_long_listing_format(struct dirent *read, char *input_path)
@@ -62,7 +71,7 @@ void ls_long_listing_format(struct dirent *read, char *input_path)
 	owner = get_owner(buf.st_uid);
 	group = get_group(buf.st_gid);
 	datetime = get_datetime(buf.st_mtime);
-	printf("%s %lu %s %s %ld %s %s\n",
+	printf("%s %lu %s %s %5ld %s %s\n",
 		   protection, buf.st_nlink, owner, group,
 		   buf.st_size, datetime, read->d_name);
 	free(protection);
