@@ -4,26 +4,24 @@ void ls_simple(struct dirent *read, dlistint_t **head_files);
 void ls_long_listing_format(struct dirent *read, char *input_path);
 
 /**
- * main - opendir(), readdir(), closedir() exercises
- * Return: 0 on success, 1 on failure
+ * main - Main function of ls project
+ * @argc: Number of arguments - Integer
+ * @argv: Array of arguments - Array of strings
+ * Return: 0 on success, status codes on failure
  */
 int main(int argc, char **argv)
 {
 	DIR *dir;
-	struct dirent *read; /* Struct used by readdir */
+	struct dirent *read;
 	char *input_path = NULL;
 	dlistint_t *head_files = NULL;
 	/* int flags = 0; */
 
-	printf("argc: %d\n", argc);
-
 	if (argc < 2)
-	{
-		printf("No input\n");
-		return (-1);
-	}
-	input_path = argv[1];
-	printf("input_path: %s\n", input_path);
+		input_path = ".";
+	else
+		input_path = argv[1];
+	/* printf("input_path: %s\n", input_path); */
 	dir = opendir(input_path);
 	if (dir == NULL)
 	{
@@ -34,7 +32,7 @@ int main(int argc, char **argv)
 
 	while ((read = readdir(dir)) != NULL)
 	{
-		if (argc == 2)
+		if (argc <= 2)
 		{
 			ls_simple(read, &head_files);
 		}
@@ -53,14 +51,27 @@ int main(int argc, char **argv)
 	return (0);
 }
 
+/**
+ * ls_simple - Simple format of ls
+ * @read: Pointer of directory structure
+ * @head_files: Head of doubly linked list that stores data files
+ * Return: void
+ */
 void ls_simple(struct dirent *read, dlistint_t **head_files)
 {
-	add_dnode(head_files, read->d_name);
+	if (_strcmp(read->d_name, ".") != 0 || _strcmp(read->d_name, ".") != 0)
+		add_dnode(head_files, read->d_name);
 }
 
+/**
+ * ls_long_listing_format - List format of ls
+ * @read: Pointer of directory structure
+ * @input_path: path of directory opened
+ * Return: void
+ */
 void ls_long_listing_format(struct dirent *read, char *input_path)
 {
-	struct stat buf; /* Buffer of lstat */
+	struct stat buf;
 	char *protection = NULL, *datetime = NULL, *owner = NULL, *group = NULL;
 
 	(void)input_path;

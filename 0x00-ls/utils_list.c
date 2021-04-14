@@ -7,7 +7,7 @@ size_t print_dlistint(const dlistint_t *h);
 /**
  * add_dnode - Add a node in the head of the list
  * @head: Memory of the Head of the linked list
- * @n: Integer data
+ * @name: String name of directory or file
  *
  * Return: Head of the list
  */

@@ -2,6 +2,11 @@
 
 char *get_datetime(time_t mtime);
 
+/**
+ * get_datetime - Date time used by ls listing format
+ * @mtime: Time represented by seconds since epoch
+ * Return: string of ls list format time
+ */
 char *get_datetime(time_t mtime)
 {
 	char *datetime = NULL, *format_date = NULL;
