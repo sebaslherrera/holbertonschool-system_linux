@@ -14,7 +14,7 @@
 
 /**
  * struct dlistint_s - doubly linked list
- * @n: integer
+ * @name: pointer of char
  * @prev: points to the previous node
  * @next: points to the next node
  *
@@ -30,6 +30,9 @@ typedef struct dlistint_s
 
 void ls_long_listing_format(struct dirent *read, char *input_path);
 void ls_simple(struct dirent *read, dlistint_t **head_files);
+
+void iterate_directories(dlistint_t *iter_derectories, dlistint_t *head_files,
+						 int n_files, int n_directories);
 
 /* Prints based on lists */
 size_t print_simple(const dlistint_t *h);
