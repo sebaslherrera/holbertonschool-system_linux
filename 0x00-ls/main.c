@@ -74,7 +74,8 @@ void file_or_directory(int argc, char **argv, char *flags, dlistint_t **files,
 			(*n_dirs)++;
 		}
 		else
-			printf("Error definiendo si es file or directory\n");
+			fprintf(stderr, "ls: cannot access %s: No such file or directory\n",
+					argv[i]);
 	}
 }
 
