@@ -23,7 +23,7 @@ void iterate_directories(dlistint_t *iter_derectories, dlistint_t *fd_of_dirs,
 		while ((read = readdir(dir)) != NULL)
 			add_dirs_list(read, &fd_of_dirs, flags);
 
-		if (n_files > 0 && n_directories > 0)
+		if ((n_files > 0 && n_directories > 0) || n_directories > 1)
 		{
 			printf("%s:\n", iter_derectories->name);
 			print_simple(fd_of_dirs);

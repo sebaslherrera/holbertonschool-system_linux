@@ -42,10 +42,11 @@ int check_file_or_directory(char *path)
  * @directories: Array of arguments - Array of strings
  * @n_dirs: Array of arguments - Array of strings
  * @n_files: Array of arguments - Array of strings
+ * @ex_code: Exit code
  * Return: 0 on success, status codes on failure
  */
 void file_or_directory(int argc, char **argv, char *flags, dlistint_t **files,
-					   dlistint_t **directories, int *n_dirs, int *n_files)
+					   dlistint_t **directories, int *n_dirs, int *n_files, int *ex_code)
 {
 	int i, start = 1, status_file_or_dir = -1;
 
@@ -75,7 +76,8 @@ void file_or_directory(int argc, char **argv, char *flags, dlistint_t **files,
 		}
 		else
 			fprintf(stderr, "hls: cannot access %s: No such file or directory\n",
-					argv[i]);
+					argv[i]),
+				*ex_code = 2;
 	}
 }
 
@@ -131,11 +133,11 @@ int main(int argc, char **argv)
 	dlistint_t *fd_of_dirs = NULL, *files = NULL,
 			   *directories = NULL, *iter_derectories = NULL;
 	char *flags = NULL;
-	int n_directories = 0, n_files = 0;
+	int n_directories = 0, n_files = 0, exit_code = 0;
 
 	flags = check_flags(argc, argv);
 	file_or_directory(argc, argv, flags, &files,
-					  &directories, &n_directories, &n_files);
+					  &directories, &n_directories, &n_files, &exit_code);
 
 	print_simple(files);
 	if (n_files > 0 && n_directories > 0)
@@ -150,7 +152,7 @@ int main(int argc, char **argv)
 	free_list(&directories);
 	free(flags);
 
-	return (0);
+	return (exit_code);
 }
 
 /**
