@@ -17,3 +17,22 @@ char *get_owner(uid_t st_uid)
 		return (NULL);
 	return (pass->pw_name);
 }
+
+/**
+ * check_owner_permission - Main function of ls project
+ * @path: Number of arguments - Integer
+ * Return: 0 on success, status codes on failure
+ */
+int check_owner_permission(char *path)
+{
+	struct stat st;
+
+	/* Error */
+	if (lstat(path, &st) == -1)
+		return (-1);
+
+	if (st.st_mode & S_IRUSR)
+		return (0);
+
+	return (-1);
+}

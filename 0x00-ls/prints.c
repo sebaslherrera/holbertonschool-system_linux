@@ -23,3 +23,27 @@ size_t print_simple(const dlistint_t *h)
 
 	return (i);
 }
+
+/**
+ * print_error_permission - Prints all the elements of a double linked list
+ * @h: Head of the linked list
+ * @exit_code: Integer exit code
+ *
+ * Return: Number of nodes (size_t)
+ */
+size_t print_error_permission(const dlistint_t *h, int *exit_code)
+{
+	size_t i = 0;
+
+	while (h != NULL)
+	{
+		fprintf(stderr, "hls: cannot open directory %s: Permission denied\n",
+				h->name);
+
+		h = h->next;
+		i++;
+		*exit_code = 2;
+	}
+
+	return (i);
+}

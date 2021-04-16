@@ -131,7 +131,7 @@ char *check_flags(int argc, char **argv)
 int main(int argc, char **argv)
 {
 	dlistint_t *fd_of_dirs = NULL, *files = NULL,
-			   *directories = NULL, *iter_derectories = NULL;
+			   *directories = NULL, *errors = NULL;
 	char *flags = NULL;
 	int n_directories = 0, n_files = 0, exit_code = 0;
 
@@ -143,15 +143,15 @@ int main(int argc, char **argv)
 	if (n_files > 0 && n_directories > 0)
 		printf("\n");
 
-	iter_derectories = directories;
+	iterate_directories(directories, fd_of_dirs,
+						n_files, n_directories, flags, &errors);
 
-	iterate_directories(iter_derectories, fd_of_dirs,
-						n_files, n_directories, flags);
+	print_error_permission(errors, &exit_code);
 
 	free_list(&files);
 	free_list(&directories);
+	free_list(&errors);
 	free(flags);
-
 	return (exit_code);
 }
 
@@ -165,7 +165,7 @@ int main(int argc, char **argv)
 void add_dirs_list(struct dirent *read, dlistint_t **fd_of_dirs, char *flags)
 {
 	/* Basic case no flags*/
-	if (flags == NULL || _strlen(flags) == 0)
+	if ((flags == NULL || _strlen(flags) == 0))
 	{
 		if (read->d_name[0] != '.')
 			add_dnode(fd_of_dirs, read->d_name);

@@ -32,10 +32,11 @@ void ls_long_listing_format(struct dirent *read, char *input_path);
 void add_dirs_list(struct dirent *read, dlistint_t **fd_of_dirs, char *flags);
 
 void iterate_directories(dlistint_t *iter_derectories, dlistint_t *head_files,
-						 int n_files, int n_directories, char *flags);
+						 int n_files, int n_directories, char *flags, dlistint_t **errors);
 
 /* Prints based on lists */
 size_t print_simple(const dlistint_t *h);
+size_t print_error_permission(const dlistint_t *h, int *exit_code);
 
 /* Files long list information */
 char *get_permissions(unsigned int st_mode);
@@ -56,5 +57,7 @@ char *_strdup(char *str);
 dlistint_t *add_dnode(dlistint_t **head, char *name);
 void free_list(dlistint_t **head);
 size_t print_dlistint(const dlistint_t *h);
+
+int check_owner_permission(char *path);
 
 #endif
