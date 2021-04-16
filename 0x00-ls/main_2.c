@@ -1,10 +1,16 @@
 #include "ls.h"
 
-void iterate_directories(dlistint_t *iter_derectories, dlistint_t *head_files,
-						 int n_files, int n_directories);
-
-void iterate_directories(dlistint_t *iter_derectories, dlistint_t *head_files,
-						 int n_files, int n_directories)
+/**
+ * iterate_directories - Main function of ls project
+ * @iter_derectories: Number of arguments - Integer
+ * @fd_of_dirs: Array of arguments - Array of strings
+ * @n_files: Array of arguments - Array of strings
+ * @n_directories: Array of arguments - Array of strings
+ * @flags: Array of arguments - Array of strings
+ * Return: 0 on success, status codes on failure
+ */
+void iterate_directories(dlistint_t *iter_derectories, dlistint_t *fd_of_dirs,
+						 int n_files, int n_directories, char *flags)
 {
 	DIR *dir;
 	struct dirent *read;
@@ -15,24 +21,19 @@ void iterate_directories(dlistint_t *iter_derectories, dlistint_t *head_files,
 		dir = opendir(iter_derectories->name);
 
 		while ((read = readdir(dir)) != NULL)
-		{
-			ls_simple(read, &head_files);
-		}
-		if (n_directories >= 2 && iter_derectories->next != NULL)
-		{
-			printf("%s:\n", iter_derectories->name);
-			print_simple(head_files);
-			printf("\n");
-		}
-		else if (n_directories >= 2)
+			add_dirs_list(read, &fd_of_dirs, flags);
+
+		if (n_files > 0 && n_directories > 0)
 		{
 			printf("%s:\n", iter_derectories->name);
-			print_simple(head_files);
+			print_simple(fd_of_dirs);
+			if (iter_derectories->next != NULL)
+				printf("\n");
 		}
 		else
-			print_simple(head_files);
+			print_simple(fd_of_dirs);
 
-		free_list(&head_files);
+		free_list(&fd_of_dirs);
 		iter_derectories = iter_derectories->next;
 		closedir(dir);
 	}

@@ -1,6 +1,5 @@
 #include "ls.h"
 
-void ls_simple(struct dirent *read, dlistint_t **head_files);
 void ls_long_listing_format(struct dirent *read, char *input_path);
 char *check_flags(int argc, char **argv);
 
@@ -63,6 +62,7 @@ void file_or_directory(int argc, char **argv, char *flags, dlistint_t **files,
 	for (i = start; argv[i] != NULL; i++)
 	{
 		status_file_or_dir = check_file_or_directory(argv[i]);
+		/* printf("argv[%d]: %s\n", i, argv[i]); */
 		if (status_file_or_dir == 1)
 		{
 			add_dnode(files, argv[i]);
@@ -74,7 +74,7 @@ void file_or_directory(int argc, char **argv, char *flags, dlistint_t **files,
 			(*n_dirs)++;
 		}
 		else
-			fprintf(stderr, "ls: cannot access %s: No such file or directory\n",
+			fprintf(stderr, "hls: cannot access %s: No such file or directory\n",
 					argv[i]);
 	}
 }
@@ -128,7 +128,7 @@ char *check_flags(int argc, char **argv)
  */
 int main(int argc, char **argv)
 {
-	dlistint_t *head_files = NULL, *files = NULL,
+	dlistint_t *fd_of_dirs = NULL, *files = NULL,
 			   *directories = NULL, *iter_derectories = NULL;
 	char *flags = NULL;
 	int n_directories = 0, n_files = 0;
@@ -137,17 +137,14 @@ int main(int argc, char **argv)
 	file_or_directory(argc, argv, flags, &files,
 					  &directories, &n_directories, &n_files);
 
-	if (n_files >= 1 && n_directories >= 1)
-	{
-		print_simple(files);
+	print_simple(files);
+	if (n_files > 0 && n_directories > 0)
 		printf("\n");
-	}
-	else
-		print_simple(files);
 
 	iter_derectories = directories;
 
-	iterate_directories(iter_derectories, head_files, n_files, n_directories);
+	iterate_directories(iter_derectories, fd_of_dirs,
+						n_files, n_directories, flags);
 
 	free_list(&files);
 	free_list(&directories);
@@ -157,15 +154,21 @@ int main(int argc, char **argv)
 }
 
 /**
- * ls_simple - Simple format of ls
+ * add_dirs_list - Simple format of ls
  * @read: Pointer of directory structure
- * @head_files: Head of doubly linked list that stores data files
+ * @fd_of_dirs: Head of doubly linked list that stores data files
+ * @flags: Head of doubly linked list that stores data files
  * Return: void
  */
-void ls_simple(struct dirent *read, dlistint_t **head_files)
+void add_dirs_list(struct dirent *read, dlistint_t **fd_of_dirs, char *flags)
 {
-	if (_strcmp(read->d_name, ".") != 0 || _strcmp(read->d_name, "..") != 0)
-		add_dnode(head_files, read->d_name);
+	/* Basic case no flags*/
+	if (flags == NULL || _strlen(flags) == 0)
+	{
+		if (read->d_name[0] != '.')
+			add_dnode(fd_of_dirs, read->d_name);
+		return;
+	}
 }
 
 /**

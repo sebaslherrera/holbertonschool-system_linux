@@ -29,10 +29,10 @@ typedef struct dlistint_s
 } dlistint_t;
 
 void ls_long_listing_format(struct dirent *read, char *input_path);
-void ls_simple(struct dirent *read, dlistint_t **head_files);
+void add_dirs_list(struct dirent *read, dlistint_t **fd_of_dirs, char *flags);
 
 void iterate_directories(dlistint_t *iter_derectories, dlistint_t *head_files,
-						 int n_files, int n_directories);
+						 int n_files, int n_directories, char *flags);
 
 /* Prints based on lists */
 size_t print_simple(const dlistint_t *h);
