@@ -40,20 +40,17 @@ int check_file_or_directory(char *path)
  * @flags: Array of arguments - Array of strings
  * @files: Array of arguments - Array of strings
  * @directories: Array of arguments - Array of strings
- * @n_dirs: Array of arguments - Array of strings
- * @n_files: Array of arguments - Array of strings
  * @ex_code: Exit code
  * Return: 0 on success, status codes on failure
  */
-void file_or_directory(int argc, char **argv, char *flags, dlistint_t **files,
-					   dlistint_t **directories, int *n_dirs, int *n_files, int *ex_code)
+void file_or_directory(int argc, char **argv, char *flags, DList *files,
+					   DList *directories, int *ex_code)
 {
 	int i, start = 1, status_file_or_dir = -1;
 
 	if (argc == 1)
 	{
-		add_dnode(directories, ".");
-		(*n_dirs)++;
+		dlist_ins_next(directories, directories->tail, ".");
 		return;
 	}
 
@@ -63,16 +60,13 @@ void file_or_directory(int argc, char **argv, char *flags, dlistint_t **files,
 	for (i = start; argv[i] != NULL; i++)
 	{
 		status_file_or_dir = check_file_or_directory(argv[i]);
-		/* printf("argv[%d]: %s\n", i, argv[i]); */
 		if (status_file_or_dir == 1)
 		{
-			add_dnode(files, argv[i]);
-			(*n_files)++;
+			dlist_ins_next(files, files->tail, argv[i]);
 		}
 		else if (status_file_or_dir == 2)
 		{
-			add_dnode(directories, argv[i]);
-			(*n_dirs)++;
+			dlist_ins_next(directories, directories->tail, argv[i]);
 		}
 		else
 			fprintf(stderr, "hls: cannot access %s: No such file or directory\n",
@@ -130,28 +124,36 @@ char *check_flags(int argc, char **argv)
  */
 int main(int argc, char **argv)
 {
-	dlistint_t *fd_of_dirs = NULL, *files = NULL,
-			   *directories = NULL, *errors = NULL;
+	DList files, directories, fd_of_dirs, errors;
 	char *flags = NULL;
 	int n_directories = 0, n_files = 0, exit_code = 0;
 
+	dlist_init(&files, destroy);
+	dlist_init(&directories, destroy);
+	dlist_init(&fd_of_dirs, destroy);
+	dlist_init(&errors, destroy);
+
 	flags = check_flags(argc, argv);
 	file_or_directory(argc, argv, flags, &files,
-					  &directories, &n_directories, &n_files, &exit_code);
+					  &directories, &exit_code);
 
-	print_simple(files);
+	n_files = files.size;
+	n_directories = directories.size;
+
+	print_dlist(&files);
 	if (n_files > 0 && n_directories > 0)
 		printf("\n");
 
-	iterate_directories(directories, fd_of_dirs,
+	iterate_directories(&directories, &fd_of_dirs,
 						n_files, n_directories, flags, &errors);
 
-	print_error_permission(errors, &exit_code);
+	print_error_permission(&errors, &exit_code);
 
-	free_list(&files);
-	free_list(&directories);
-	free_list(&errors);
 	free(flags);
+	dlist_destroy(&directories);
+	dlist_destroy(&files);
+	dlist_destroy(&errors);
+
 	return (exit_code);
 }
 
@@ -162,13 +164,13 @@ int main(int argc, char **argv)
  * @flags: Head of doubly linked list that stores data files
  * Return: void
  */
-void add_dirs_list(struct dirent *read, dlistint_t **fd_of_dirs, char *flags)
+void add_dirs_list(struct dirent *read, DList *fd_of_dirs, char *flags)
 {
 	/* Basic case no flags*/
 	if ((flags == NULL || _strlen(flags) == 0))
 	{
 		if (read->d_name[0] != '.')
-			add_dnode(fd_of_dirs, read->d_name);
+			dlist_ins_next(fd_of_dirs, fd_of_dirs->tail, read->d_name);
 		return;
 	}
 }
