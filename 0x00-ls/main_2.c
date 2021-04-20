@@ -27,12 +27,12 @@ void read_content(char *flags, DIR *dir, DListElmt *dir_head,
 		if ((n_files > 0 && n_directories > 0) || n_directories > 1)
 		{
 			printf("%s:\n", (char *)dlist_data(dir_head));
-			print_dlist(fd_of_dirs);
+			print_dlist2(fd_of_dirs);
 			if (dlist_next(dir_head) != NULL)
 				printf("\n");
 		}
 		else
-			print_dlist(fd_of_dirs);
+			print_dlist2(fd_of_dirs);
 
 		dlist_destroy(fd_of_dirs);
 	}

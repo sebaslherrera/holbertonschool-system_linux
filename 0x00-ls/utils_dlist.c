@@ -36,6 +36,30 @@ size_t print_dlist(const DList *list)
 }
 
 /**
+ * print_dlist2 - Prints all the elements of a double linked list
+ * @list: Head of the linked list
+ *
+ * Return: Number of nodes (size_t)
+ */
+size_t print_dlist2(const DList *list)
+{
+	size_t i = 0;
+	DListElmt *head = list->head;
+
+	while (head != NULL)
+	{
+		if (head->next == NULL)
+			printf("%s\n", (char *)head->data);
+		else
+			printf("%s  ", (char *)head->data);
+		head = head->next;
+		i++;
+	}
+
+	return (i);
+}
+
+/**
  * print_error_permission - Prints all the elements of a double linked list
  * @list: Head of the linked list
  * @exit_code: Integer exit code

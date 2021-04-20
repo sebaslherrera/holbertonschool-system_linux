@@ -90,5 +90,6 @@ int dlist_remove(DList *list, DListElmt *element, void **data);
 void destroy(void *data);
 size_t print_dlist(const DList *h);
 size_t print_error_permission(const DList *h, int *exit_code);
+size_t print_dlist2(const DList *list);
 
 #endif
