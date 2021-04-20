@@ -51,8 +51,8 @@ typedef struct DList_
 void ls_long_listing_format(struct dirent *read, char *input_path);
 void add_dirs_list(struct dirent *read, DList *fd_of_dirs, char *flags);
 
-void iterate_directories(DList *directories, DList *head_files,
-						 int n_files, int n_directories, char *flags, DList *errors);
+void iterate_directories(DList *directories, DList *head_files, int n_files,
+						 int n_directories, char *flags, DList *errors, int *exit_code);
 
 /* Files long list information */
 char *get_permissions(unsigned int st_mode);

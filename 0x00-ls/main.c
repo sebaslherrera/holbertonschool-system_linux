@@ -145,7 +145,7 @@ int main(int argc, char **argv)
 		printf("\n");
 
 	iterate_directories(&directories, &fd_of_dirs,
-						n_files, n_directories, flags, &errors);
+						n_files, n_directories, flags, &errors, &exit_code);
 
 	print_error_permission(&errors, &exit_code);
 
